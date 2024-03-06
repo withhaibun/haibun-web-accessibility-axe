@@ -1,11 +1,11 @@
 import { AStepper, TWorld, TNamed, IHasOptions, OK, TVStep } from '@haibun/core/build/lib/defs.js';
 import { actionNotOK, findStepper, findStepperFromOption, stringOrError } from '@haibun/core/build/lib/util/index.js';
-import { chromium, Page } from 'playwright';
+import { Page } from 'playwright';
 import { evalSeverity, getAxeBrowserResult } from './lib/a11y-axe.js';
 import { generateHTMLAxeReportFromStepReport, generateHTMLAxeReportFromBrowserResult } from './lib/report.js';
 import { AStorage } from '@haibun/domain-storage/build/AStorage.js';
-import { EMediaTypes } from '@haibun/domain-storage/build/domain-storage.js';
 import { TArtifactMessageContext } from '@haibun/core/build/lib/interfaces/logger.js';
+import { EMediaTypes } from '@haibun/domain-storage/build/media-types.js';
 
 type TGetsPage = { getPage: () => Promise<Page> };
 
@@ -34,20 +34,6 @@ class A11yStepper extends AStepper implements IHasOptions {
           return actionNotOK(`no page in runtime`);
         }
         return await this.checkA11y(page, serious!, moderate!, step);
-      },
-    },
-    checkA11yWithUri: {
-      gwta: `page at {uri} is accessible accepting serious {serious} and moderate {moderate}`,
-      action: async ({ uri, serious, moderate }: TNamed, step: TVStep) => {
-        const browser = await chromium.launch();
-        const page: Page = await browser.newPage();
-        await page.goto(uri!);
-
-        const result = await this.checkA11y(page, serious!, moderate!, step);
-
-        // page.close();
-        // browser.close();
-        return result;
       },
     },
     generateHTMLRereport: {
