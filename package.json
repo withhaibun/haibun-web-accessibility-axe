@@ -1,7 +1,7 @@
 {
   "name": "@haibun/web-accessibility-axe",
   "type": "module",
-  "version": "1.44.0",
+  "version": "1.44.1",
   "description": "web accessibility test using axe for haibun",
   "main": "build/a11y-axe-stepper.js",
   "files": [
@@ -26,8 +26,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@haibun/core": "1.40.9",
-    "@haibun/domain-storage": "1.40.9",
+    "@haibun/core": "1.44.0",
+    "@haibun/domain-storage": "1.44.0",
     "@types/node": "^20.3.1",
     "axe-core": "^4.6.2",
     "axe-html-reporter": "^2.2.3",
@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
-    "@haibun/cli": "1.40.9",
-    "@haibun/storage-mem": "1.40.9",
-    "@haibun/web-playwright": "1.40.9",
+    "@haibun/cli": "1.44.0",
+    "@haibun/storage-mem": "1.44.0",
+    "@haibun/web-playwright": "1.44.0",
     "eslint": "^8.31.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.6.0",
