@@ -51,29 +51,6 @@ page is accessible accepting serious 0 and moderate 0
   });
 });
 
-// these tests are being skipped because an error is happening between tests. however, runtime tests are not a priority
-describe.skip('a11y test from runtime', () => {
-  it('passes', async () => {
-    const features = [{
-      path: '/features/test.feature', content: `
-serve files at /static from test
-page at ${PASSES_URI} is accessible accepting serious 0 and moderate 2
-`}];
-    const res = await testWithDefaults(features, [A11yAxe, WebServerStepper, WebPlaywright, DomainWebPage, StorageMem], { options, extraOptions });
-    expect(res.ok).toBe(true);
-  });
-  it('fails', async () => {
-    const features = [{
-      path: '/features/test.feature', content: `
-serve files at /static from test
-page at ${FAILS_URI} is accessible accepting serious 0 and moderate 0
-`}];
-
-    const res = await testWithDefaults(features, [A11yAxe, WebServerStepper, WebPlaywright, DomainWebPage, StorageMem], { options, extraOptions });
-    expect(res.ok).toBe(false);
-  });
-});
-
 describe('generate report', () => {
   test('generates a report from failures.json', async () => {
     StorageMem.BASE_FS = {
