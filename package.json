@@ -34,8 +34,8 @@
     "@haibun/web-playwright": "1.40.9",
     "@haibun/web-server-express": "1.40.9",
     "@types/node": "^20.3.1",
-    "axe-core": "^4.6.2",
-    "axe-html-reporter": "^2.2.3",
+    "axe-core": "^4.10.3",
+    "axe-html-reporter": "^2.2.11",
     "playwright": "1.44",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1"
