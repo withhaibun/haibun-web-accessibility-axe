@@ -11,7 +11,7 @@ jobs:
   e2e_test_and_publish:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.52.0-noble
+      image: mcr.microsoft.com/playwright:v1.44.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
