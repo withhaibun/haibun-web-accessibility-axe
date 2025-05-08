@@ -1,9 +1,12 @@
-import { AStepper, TWorld, TNamed, IHasOptions, OK, TAnyFixme } from '@haibun/core/build/lib/defs.js';
-import { actionNotOK, findStepper, stringOrError } from '@haibun/core/build/lib/util/index.js';
-import { Page } from 'playwright';
-import { evalSeverity, getAxeBrowserResult } from './lib/a11y-axe.js';
-import { generateHTMLAxeReportFromBrowserResult } from './lib/report.js';
-import { EExecutionMessageType, TArtifactHTML, TMessageContext } from '@haibun/core/build/lib/interfaces/logger.js';
+import { Page } from "playwright";
+
+import { TWorld, TNamed } from "@haibun/core/build/lib/defs.js";
+import { AStepper, IHasOptions } from "@haibun/core/build/lib/astepper.js";
+import { TAnyFixme } from "@haibun/core/build/lib/fixme.js";
+import { TArtifactHTML } from "@haibun/core/build/lib/interfaces/logger.js";
+import { stringOrError, findStepper, actionNotOK, actionOK } from "@haibun/core/build/lib/util/index.js";
+import { getAxeBrowserResult, evalSeverity } from "./lib/a11y-axe.js";
+import { generateHTMLAxeReportFromBrowserResult } from "./lib/report.js";
 
 type TGetsPage = { getPage: () => Promise<Page> };
 
@@ -43,31 +46,24 @@ class A11yStepper extends AStepper implements IHasOptions {
         moderate: parseInt(moderate!) || 0,
       });
       if (evaluation.ok) {
-        const context: TMessageContext = this.getArtifact(axeReport);
-        this.getWorld().logger.info(`axe report`, context);
-        return Promise.resolve(OK);
+        const artifact = this.getArtifact(axeReport);
+        return Promise.resolve(actionOK({ artifact }));
       }
       const message = `not acceptable`;
-      const context: TMessageContext = this.getArtifact(axeReport);
+      const artifact = this.getArtifact(axeReport);
 
-      this.getWorld().logger.error(message, context);
-      return actionNotOK(message, this.getArtifact(axeReport));
+      return actionNotOK(message, { artifact });
     } catch (e) {
       const { message } = { message: 'test' };
-      return actionNotOK(message, { incident: EExecutionMessageType.ACTION, incidentDetails: { exception: { summary: message, details: e } } });
+
+      return actionNotOK(message, { artifact: { artifactType: 'json', json: { exception: { summary: message, details: e } } } });
     }
   }
 
-  private getArtifact(axeReport: TAnyFixme): TMessageContext {
+  private getArtifact(axeReport: TAnyFixme) {
     const html = generateHTMLAxeReportFromBrowserResult(axeReport);
     const artifact: TArtifactHTML = { artifactType: 'html', html };
-    const context: TMessageContext = {
-      incident: EExecutionMessageType.ACTION,
-      artifact,
-      incidentDetails: axeReport,
-      tag: this.getWorld().tag,
-    };
-    return context;
+    return artifact;
   }
 }
 

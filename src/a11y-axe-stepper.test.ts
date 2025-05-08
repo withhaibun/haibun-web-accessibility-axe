@@ -1,15 +1,14 @@
 import { describe, it, expect, afterAll } from 'vitest';
+import { pathToFileURL } from 'url';
 
 import { testWithDefaults } from '@haibun/core/build/lib/test/lib.js';
 import A11yAxe from './a11y-axe-stepper.js';
-import { DEFAULT_DEST } from '@haibun/core/build/lib/defs.js';
+import { DEFAULT_DEST, TOKActionResult } from '@haibun/core/build/lib/defs.js';
 import { getStepperOptionName } from '@haibun/core/build/lib/util/index.js';
 import { BrowserFactory } from '@haibun/web-playwright/build/BrowserFactory.js';
 
 import StorageMem from '@haibun/storage-mem/build/storage-mem.js';
 import WebPlaywright from '@haibun/web-playwright';
-import { pathToFileURL } from 'url';
-import { TArtifactHTML } from '@haibun/core/build/lib/interfaces/artifacts.js';
 
 const PASSES_URI = pathToFileURL('./files/test/passes.html');
 const FAILS_URI = pathToFileURL('./files/test/passes.html');
@@ -56,8 +55,6 @@ page is accessible accepting serious 0 and moderate 0
     expect(fr[0]?.ok).toBe(true);
     expect(fr[1]).toBeDefined();
     expect(fr[1]?.ok).toBe(false);
-    expect(fr[1]?.actionResult.messageContext).toBeDefined();
-    expect(fr[1]?.actionResult.messageContext?.artifact).toBeDefined();
-    expect((<TArtifactHTML>fr[1]?.actionResult.messageContext?.artifact)?.html).toBeDefined();
+    expect((<TOKActionResult>res.featureResults![0]!.stepResults![1]?.actionResult)?.artifact).toBeDefined();
   });
 });

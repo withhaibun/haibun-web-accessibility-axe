@@ -1,7 +1,7 @@
 {
   "name": "@haibun/web-accessibility-axe",
   "type": "module",
-  "version": "1.49.0",
+  "version": "~~1.49.0",
   "description": "web accessibility test using axe for haibun",
   "main": "build/a11y-axe-stepper.js",
   "files": [
@@ -25,16 +25,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@haibun/core": "1.47.0",
-    "@haibun/domain-storage": "1.47.0",
+    "@haibun/core": "~1.49",
+    "@haibun/domain-storage": "~1.49",
     "axe-core": "^4.10.3",
     "axe-html-reporter": "^2.2.11",
     "playwright": "1.52"
   },
   "devDependencies": {
-    "@haibun/cli": "1.49",
-    "@haibun/storage-mem": "1.49",
-    "@haibun/web-playwright": "1.49",
+    "@haibun/cli": "~1.49",
+    "@haibun/storage-mem": "~1.49",
+    "@haibun/web-playwright": "~1.49",
     "@types/express": "^4.17.21",
     "@types/node": "^22.15.3",
     "eslint": "^8.57.1",
