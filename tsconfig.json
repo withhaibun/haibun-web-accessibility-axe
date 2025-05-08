@@ -8,8 +8,7 @@
       "es2020", "DOM", "ESNext"
     ],
     "types": [
-      "node",
-      "jest"
+      "node"
     ],
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,9 +17,13 @@
     "noUncheckedIndexedAccess": true,
     "strict": true,
     "experimentalDecorators": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "skipLibCheck": true
   },
   "include": [
     "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

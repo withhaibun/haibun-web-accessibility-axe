@@ -1,11 +1,9 @@
-import { AStepper, TWorld, TNamed, IHasOptions, OK, TVStep } from '@haibun/core/build/lib/defs.js';
-import { actionNotOK, findStepper, findStepperFromOption, stringOrError } from '@haibun/core/build/lib/util/index.js';
+import { AStepper, TWorld, TNamed, IHasOptions, OK, TAnyFixme } from '@haibun/core/build/lib/defs.js';
+import { actionNotOK, findStepper, stringOrError } from '@haibun/core/build/lib/util/index.js';
 import { Page } from 'playwright';
 import { evalSeverity, getAxeBrowserResult } from './lib/a11y-axe.js';
-import { generateHTMLAxeReportFromStepReport, generateHTMLAxeReportFromBrowserResult } from './lib/report.js';
-import { AStorage } from '@haibun/domain-storage/build/AStorage.js';
-import { TArtifactMessageContext } from '@haibun/core/build/lib/interfaces/logger.js';
-import { EMediaTypes } from '@haibun/domain-storage/build/media-types.js';
+import { generateHTMLAxeReportFromBrowserResult } from './lib/report.js';
+import { EExecutionMessageType, TArtifactHTML, TMessageContext } from '@haibun/core/build/lib/interfaces/logger.js';
 
 type TGetsPage = { getPage: () => Promise<Page> };
 
@@ -28,26 +26,16 @@ class A11yStepper extends AStepper implements IHasOptions {
   steps = {
     checkA11yRuntime: {
       gwta: `page is accessible accepting serious {serious} and moderate {moderate}`,
-      action: async ({ serious, moderate }: TNamed, step: TVStep) => {
+      action: async ({ serious, moderate }: TNamed) => {
         const page = await this.pageGetter?.getPage();
         if (!page) {
           return actionNotOK(`no page in runtime`);
         }
-        return await this.checkA11y(page, serious!, moderate!, step);
-      },
-    },
-    generateHTMLRereport: {
-      gwta: `extract HTML report from {source} to {dest}`,
-      action: async ({ source, dest }: TNamed) => {
-        const storage = findStepperFromOption<AStorage>(this.steppers, this, this.getWorld().extraOptions, A11yStepper.STORAGE);
-        const json = JSON.parse(storage.readFile(source!));
-        const report = generateHTMLAxeReportFromStepReport(json);
-        await storage.writeFile(dest!, report, EMediaTypes.html);
-        return OK;
+        return await this.checkA11y(page, serious!, moderate!);
       },
     },
   };
-  async checkA11y(page: Page, serious: string, moderate: string, step: TVStep) {
+  async checkA11y(page: Page, serious: string, moderate: string) {
     try {
       const axeReport = await getAxeBrowserResult(page);
       const evaluation = evalSeverity(axeReport, {
@@ -55,27 +43,31 @@ class A11yStepper extends AStepper implements IHasOptions {
         moderate: parseInt(moderate!) || 0,
       });
       if (evaluation.ok) {
-        // TMI
-        return OK;
+        const context: TMessageContext = this.getArtifact(axeReport);
+        this.getWorld().logger.info(`axe report`, context);
+        return Promise.resolve(OK);
       }
       const message = `not acceptable`;
-      const html = generateHTMLAxeReportFromBrowserResult(axeReport);
-      this.getWorld().logger.error(message, <TArtifactMessageContext>{ topic: { step, event: 'failure', stage: 'action' }, artifact: { type: 'html', content: html, }, tag: this.getWorld().tag });
-      return actionNotOK(message, {
-        topics: {
-          axeFailure: {
-            summary: message,
-            report: { html },
-            details: { axeReport, res: evaluation },
-          },
-        },
-      });
+      const context: TMessageContext = this.getArtifact(axeReport);
+
+      this.getWorld().logger.error(message, context);
+      return actionNotOK(message, this.getArtifact(axeReport));
     } catch (e) {
       const { message } = { message: 'test' };
-      return actionNotOK(message, {
-        topics: { exception: { summary: message, details: e } },
-      });
+      return actionNotOK(message, { incident: EExecutionMessageType.ACTION, incidentDetails: { exception: { summary: message, details: e } } });
     }
+  }
+
+  private getArtifact(axeReport: TAnyFixme): TMessageContext {
+    const html = generateHTMLAxeReportFromBrowserResult(axeReport);
+    const artifact: TArtifactHTML = { artifactType: 'html', html };
+    const context: TMessageContext = {
+      incident: EExecutionMessageType.ACTION,
+      artifact,
+      incidentDetails: axeReport,
+      tag: this.getWorld().tag,
+    };
+    return context;
   }
 }
 
