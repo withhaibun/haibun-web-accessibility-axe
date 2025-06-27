@@ -55,6 +55,6 @@ page is accessible accepting serious 0 and moderate 0
     expect(fr[0]?.ok).toBe(true);
     expect(fr[1]).toBeDefined();
     expect(fr[1]?.ok).toBe(false);
-    expect((<TOKActionResult>res.featureResults![0]!.stepResults![1]?.actionResult)?.artifact).toBeDefined();
+    expect((<TOKActionResult>res.featureResults![0]!.stepResults![1]?.stepActionResult)?.artifact).toBeDefined();
   });
 });
