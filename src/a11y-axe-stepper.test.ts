@@ -1,13 +1,13 @@
 import { describe, it, expect, afterAll } from 'vitest';
 import { pathToFileURL } from 'url';
 
-import { testWithDefaults } from '@haibun/core/build/lib/test/lib.js';
+import { testWithDefaults } from '@haibun/core/lib/test/lib.js';
 import A11yAxe from './a11y-axe-stepper.js';
-import { DEFAULT_DEST, TOKActionResult } from '@haibun/core/build/lib/defs.js';
-import { getStepperOptionName } from '@haibun/core/build/lib/util/index.js';
-import { BrowserFactory } from '@haibun/web-playwright/build/BrowserFactory.js';
+import { DEFAULT_DEST, TOKActionResult } from '@haibun/core/lib/defs.js';
+import { getStepperOptionName } from '@haibun/core/lib/util/index.js';
+import { BrowserFactory } from '@haibun/web-playwright/BrowserFactory.js';
 
-import StorageMem from '@haibun/storage-mem/build/storage-mem.js';
+import StorageMem from '@haibun/storage-mem/storage-mem.js';
 import WebPlaywright from '@haibun/web-playwright';
 
 const PASSES_URI = pathToFileURL('./files/test/passes.html');

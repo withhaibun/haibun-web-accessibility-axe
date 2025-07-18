@@ -1,14 +1,14 @@
 import { Page } from "playwright";
 
-import { TWorld, TNamed, TFeatureStep } from "@haibun/core/build/lib/defs.js";
-import { AStepper, IHasOptions } from "@haibun/core/build/lib/astepper.js";
-import { TAnyFixme } from "@haibun/core/build/lib/fixme.js";
-import { TArtifactHTML } from "@haibun/core/build/lib/interfaces/logger.js";
-import { stringOrError, findStepper, actionNotOK, actionOK, findStepperFromOption } from "@haibun/core/build/lib/util/index.js";
+import { TWorld, TNamed, TFeatureStep } from "@haibun/core/lib/defs.js";
+import { AStepper, IHasOptions } from "@haibun/core/lib/astepper.js";
+import { TAnyFixme } from "@haibun/core/lib/fixme.js";
+import { TArtifactHTML } from "@haibun/core/lib/interfaces/logger.js";
+import { stringOrError, findStepper, actionNotOK, actionOK, findStepperFromOption } from "@haibun/core/lib/util/index.js";
 import { getAxeBrowserResult, evalSeverity } from "./lib/a11y-axe.js";
 import { generateHTMLAxeReportFromBrowserResult } from "./lib/report.js";
-import { AStorage } from "@haibun/domain-storage/build/AStorage.js";
-import { EMediaTypes } from "@haibun/domain-storage/build/media-types.js";
+import { AStorage } from "@haibun/domain-storage/AStorage.js";
+import { EMediaTypes } from "@haibun/domain-storage/media-types.js";
 import { resolve } from "path";
 
 type TGetsPage = { getPage: () => Promise<Page> };
