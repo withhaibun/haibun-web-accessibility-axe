@@ -18,6 +18,7 @@ const options = {
 };
 const moduleOptions = {
   [getStepperOptionName(WebPlaywright, 'STORAGE')]: 'StorageMem',
+  [getStepperOptionName(A11yAxe, 'STORAGE')]: 'StorageMem',
   [getStepperOptionName(WebPlaywright, 'HEADLESS')]: 'true'
 }
 
