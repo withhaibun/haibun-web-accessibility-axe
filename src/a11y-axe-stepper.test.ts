@@ -1,7 +1,7 @@
 import { describe, it, expect, afterAll } from 'vitest';
 import { pathToFileURL } from 'url';
 
-import { testWithDefaults } from '@haibun/core/lib/test/lib.js';
+import { passWithDefaults } from '@haibun/core/lib/test/lib.js';
 import A11yAxe from './a11y-axe-stepper.js';
 import { DEFAULT_DEST, TOKActionResult } from '@haibun/core/lib/defs.js';
 import { getStepperOptionName } from '@haibun/core/lib/util/index.js';
@@ -11,7 +11,7 @@ import StorageMem from '@haibun/storage-mem/storage-mem.js';
 import WebPlaywright from '@haibun/web-playwright';
 
 const PASSES_URI = pathToFileURL('./files/test/passes.html');
-const FAILS_URI = pathToFileURL('./files/test/passes.html');
+const FAILS_URI = pathToFileURL('./files/test/fails.html');
 
 const options = {
   DEST: DEFAULT_DEST
@@ -34,7 +34,7 @@ Go to the ${PASSES_URI} webpage
 page is accessible accepting serious 0 and moderate 2
 `}];
 
-    const res = await testWithDefaults(features, [A11yAxe, WebPlaywright, StorageMem], { options, moduleOptions });
+    const res = await passWithDefaults(features, [A11yAxe, WebPlaywright, StorageMem], { options, moduleOptions });
     expect(res.ok).toBe(true);
     const fr = res.featureResults![0]!.stepResults!;
     expect(fr[0]).toBeDefined();
@@ -49,7 +49,7 @@ Go to the ${FAILS_URI} webpage
 page is accessible accepting serious 0 and moderate 0
 `}];
 
-    const res = await testWithDefaults(features, [A11yAxe, WebPlaywright, StorageMem], { options, moduleOptions });
+    const res = await passWithDefaults(features, [A11yAxe, WebPlaywright, StorageMem], { options, moduleOptions });
     expect(res.ok).toBe(false);
     const fr = res.featureResults![0]!.stepResults!;
     expect(fr[0]).toBeDefined();

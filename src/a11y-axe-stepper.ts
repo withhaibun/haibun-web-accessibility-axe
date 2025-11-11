@@ -1,7 +1,7 @@
 import { Page } from "playwright";
 
-import { TWorld, TNamed, TFeatureStep } from "@haibun/core/lib/defs.js";
-import { AStepper, IHasOptions } from "@haibun/core/lib/astepper.js";
+import { TWorld, TFeatureStep } from "@haibun/core/lib/defs.js";
+import { AStepper, IHasOptions, TStepperSteps } from "@haibun/core/lib/astepper.js";
 import { TAnyFixme } from "@haibun/core/lib/fixme.js";
 import { TArtifactHTML } from "@haibun/core/lib/interfaces/logger.js";
 import { stringOrError, findStepper, actionNotOK, actionOK, findStepperFromOption } from "@haibun/core/lib/util/index.js";
@@ -32,31 +32,32 @@ class A11yStepper extends AStepper implements IHasOptions {
 
   }
 
+  asNumber = (value: string) => value.match(/[^\d+]/) ? NaN : parseInt(value);
   steps = {
     checkA11yRuntime: {
-      gwta: `page is accessible accepting serious {serious} and moderate {moderate}`,
-      action: async ({ serious, moderate }: TNamed, { seq }: TFeatureStep) => {
+      gwta: `page is accessible accepting serious {serious:number} and moderate {moderate:number}`,
+      action: async ({ serious, moderate }: { serious: string, moderate: string }, { seqPath }: TFeatureStep) => {
         const page = await this.pageGetter?.getPage();
         if (!page) {
           return actionNotOK(`no page in runtime`);
         }
-        return await this.checkA11y(page, serious!, moderate!, `a11y-check-${seq}`);
+        return await this.checkA11y(page, this.asNumber(serious), this.asNumber(moderate), `a11y-check-${seqPath}`);
       },
     },
-  };
-  async checkA11y(page: Page, serious: string, moderate: string, filename: string) {
+   } satisfies TStepperSteps;
+  async checkA11y(page: Page, serious: number, moderate: number, filename: string) {
     try {
       const axeReport = await getAxeBrowserResult(page);
       const evaluation = evalSeverity(axeReport, {
-        serious: parseInt(serious!) || 0,
-        moderate: parseInt(moderate!) || 0,
+        serious,
+        moderate,
       });
       if (evaluation.ok) {
-        const artifact = await this.getArtifact(axeReport, filename);
+        const artifact = await this.generateArtifact(axeReport, filename);
         return Promise.resolve(actionOK({ artifact }));
       }
       const message = `not acceptable`;
-      const artifact = await this.getArtifact(axeReport, filename);
+      const artifact = await this.generateArtifact(axeReport, filename);
 
       return actionNotOK(message, { artifact });
     } catch (e) {
@@ -66,7 +67,7 @@ class A11yStepper extends AStepper implements IHasOptions {
     }
   }
 
-  private async getArtifact(axeReport: TAnyFixme, filename: string) {
+  private async generateArtifact(axeReport: TAnyFixme, filename: string) {
     const html = generateHTMLAxeReportFromBrowserResult(axeReport);
     if (this.storage) {
       const loc = { ...this.getWorld(), mediaType: EMediaTypes.html };
