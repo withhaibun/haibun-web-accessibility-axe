@@ -3,6 +3,7 @@ import { createRequire } from 'module';
 import { Page } from 'playwright'
 import { Spec, ElementContext, RunOptions, AxeResults } from 'axe-core';
 import { ConfigOptions } from './axe-types.js';
+import { TAnyFixme } from '@haibun/core/lib/fixme.js';
 
 const require = createRequire(import.meta.url);
 
@@ -39,13 +40,13 @@ export const injectAxe = async (page: Page): Promise<void> => {
 
 export const configureAxe = async (page: Page, configurationOptions: ConfigOptions = {}): Promise<void> => {
   await page.evaluate(
-    (configOptions: Spec) => (window as any).configure(configOptions),
+    (configOptions: Spec) => (window as TAnyFixme).configure(configOptions),
     configurationOptions as Spec
   );
 }
 
 export const getAxeResults = async (page: Page, context?: ElementContext, options?: RunOptions): Promise<AxeResults> => {
-  const result = await page.evaluate(([context, options]) => (window as any).axe.run(context || window.document, options)
+  const result = await page.evaluate(([context, options]) => (window as TAnyFixme).axe.run(context || window.document, options)
     , [/*context,*/ options]);
 
   return result;
